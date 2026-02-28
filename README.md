@@ -1,52 +1,58 @@
 # Sales PySpark ETL Project
 
-This project now runs as a local PySpark ETL pipeline with layered outputs:
-- Bronze: raw CSV ingested to Parquet
-- Silver: cleaned/standardized entities
+PySpark ETL project using a layered lakehouse-style pipeline:
+- Bronze: raw CSV ingestion to Parquet
+- Silver: cleaned and standardized entities
 - Gold: analytics-ready dimensions and fact table
 
-## Tech Stack
-- PySpark
-- Python
-- Parquet
+## Best-Practice Structure
 
-## Project Structure
 ```text
 .
-├── datasets/                # Source CSV files
-├── etl/
-│   ├── pyspark_etl.py       # Main PySpark ETL pipeline
-│   ├── run_pipeline.py      # Wrapper entrypoint
-│   └── requirements.txt
+├── sales_etl/
+│   ├── cli.py                  # CLI entrypoint
+│   ├── config.py               # Typed runtime configuration
+│   ├── pipeline.py             # Orchestration flow
+│   ├── common/
+│   │   ├── io_utils.py         # Shared read/write + schema helpers
+│   │   ├── logging_utils.py    # File + console logging
+│   │   └── spark_session.py    # SparkSession builder
+│   └── jobs/
+│       ├── bronze.py           # Bronze transforms
+│       ├── silver.py           # Silver transforms
+│       └── gold.py             # Gold transforms
+├── datasets/                   # Source CSVs
+├── data_lake/                  # Generated Parquet outputs
+├── log/                        # Pipeline logs
 ├── script/
-│   └── run_etl.sh           # Shell runner
-├── log/                     # Pipeline logs
-├── data_lake/               # Generated Bronze/Silver/Gold parquet outputs
-└── scripts/                 # Existing SQL/generator assets (kept in repo)
+│   └── run_etl.sh              # Shell runner
+├── tests/                      # SQL quality checks kept from previous design
+└── requirements.txt
 ```
 
-## Setup
+## Install
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r etl/requirements.txt
+pip install -r requirements.txt
 ```
 
-## Run ETL
-Option 1:
+## Run
+
+Preferred:
 ```bash
-python -m etl.run_pipeline
+python -m sales_etl.cli
 ```
 
-Option 2:
+Shell runner:
 ```bash
 ./script/run_etl.sh
 ```
 
-## Output
-- Data lake output: `data_lake/bronze`, `data_lake/silver`, `data_lake/gold`
-- Logs: `log/pipeline_latest.log` and timestamped run logs in `log/`
+## Outputs
 
-## Notes
-- Input CSV source remains under `datasets/`.
-- Existing legacy PostgreSQL SQL files are kept under `scripts/` and are no longer required for this PySpark run path.
+- Bronze Parquet: `data_lake/bronze/`
+- Silver Parquet: `data_lake/silver/`
+- Gold Parquet: `data_lake/gold/`
+- Logs: `log/pipeline_latest.log` and timestamped logs in `log/`

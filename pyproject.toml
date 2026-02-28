@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sales-pyspark-etl"
+version = "0.1.0"
+description = "Sales ETL pipeline with PySpark"
+requires-python = ">=3.10"
+dependencies = [
+  "pyspark==3.5.1",
+  "python-dotenv==1.0.1",
+]
+
+[project.scripts]
+sales-etl = "sales_etl.cli:main"
