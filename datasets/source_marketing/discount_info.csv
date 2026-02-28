@@ -1,0 +1,6 @@
+discount_id,description,percent,active
+D001,Promo 5% off,5,true
+D002,Promo 10% off,10,true
+D003,Promo 15% off,15,true
+D004,Promo 20% off,20,true
+D005,Promo 25% off,25,true
