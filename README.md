@@ -20,7 +20,8 @@ PySpark ETL project using a layered lakehouse-style pipeline:
 │   └── jobs/
 │       ├── bronze.py           # Bronze transforms
 │       ├── silver.py           # Silver transforms
-│       └── gold.py             # Gold transforms
+│       ├── gold.py             # Gold transforms
+│       └── publish.py          # Publish Gold to Postgres
 ├── datasets/                   # Source CSVs
 ├── data_lake/                  # Generated Parquet outputs
 ├── log/                        # Pipeline logs
@@ -56,3 +57,24 @@ Shell runner:
 - Silver Parquet: `data_lake/silver/`
 - Gold Parquet: `data_lake/gold/`
 - Logs: `log/pipeline_latest.log` and timestamped logs in `log/`
+
+## Publish Gold To Postgres
+
+The pipeline automatically publishes Gold tables to Postgres when enabled.
+
+Required `.env` keys:
+
+```bash
+PUBLISH_GOLD_TO_POSTGRES=true
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_DB=your_db
+POSTGRES_USER=your_user
+POSTGRES_PASSWORD=your_password
+POSTGRES_SCHEMA=gold
+```
+
+Notes:
+- Gold tables published: `dim_customers`, `dim_products`, `dim_salesperson`, `dim_discount`, `fact_sales`.
+- If `PUBLISH_GOLD_TO_POSTGRES=false`, publish step is skipped.
+- JDBC driver package defaults to `org.postgresql:postgresql:42.7.4` and is loaded by Spark automatically.
